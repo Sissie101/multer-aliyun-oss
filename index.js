@@ -18,10 +18,38 @@ function getRandomFilename(req, file, cb) {
 }
 
 class AliYunOssStorage {
-    constructor({ config, destination = '', filename = getRandomFilename }) {
+    constructor({ config, destination = '', filename = getRandomFilename, base44 = null }) {
         this.client = new OSS(config);
         this.getDestination = typeof destination === 'string' ? (req, file, cb) => cb(null, destination) : destination;
         this.getFilename = filename;
+        this.base44Config = base44;
+        this._base44Client = null;
+    }
+
+    _initBase44Client() {
+        if (this._base44Client) return Promise.resolve(this._base44Client);
+        if (!this.base44Config || !this.base44Config.appId) return Promise.resolve(null);
+
+        let sdk;
+        try {
+            sdk = require('@base44/sdk');
+        } catch (e) {
+            console.warn('multer-aliyun-oss: @base44/sdk not found. Run: npm install @base44/sdk');
+            return Promise.resolve(null);
+        }
+
+        const client = sdk.createClient({ appId: this.base44Config.appId });
+
+        if (this.base44Config.email && this.base44Config.password) {
+            return client.auth.loginViaEmailPassword(this.base44Config.email, this.base44Config.password)
+                .then(() => {
+                    this._base44Client = client;
+                    return client;
+                });
+        }
+
+        this._base44Client = client;
+        return Promise.resolve(client);
     }
 
     _handleFile(req, file, cb) {
@@ -33,6 +61,7 @@ class AliYunOssStorage {
         const getFilename = promisify(this.getFilename);
 
         let size = 0;
+        let fileInfo = null;
 
         Promise.all([
             getDestination(req, file),
@@ -46,19 +75,41 @@ class AliYunOssStorage {
                 });
                 return this.client.putStream(`${destination}/${filename}`, file.stream);
             })
-            .then(result => {
-                const { url, name } = result;
+            .then(({ url, name }) => {
                 const lastSlashIndex = name.lastIndexOf('/');
-                const path = name.substr(0, lastSlashIndex);
-                cb(null, {
-                    destination: path,
+                fileInfo = {
+                    destination: name.substr(0, lastSlashIndex),
                     filename: name.substr(lastSlashIndex + 1),
-                    path,
+                    path: name.substr(0, lastSlashIndex),
+                    url,
                     size
+                };
+
+                if (!this.base44Config || !this.base44Config.entityName) {
+                    return null;
+                }
+
+                return this._initBase44Client().then(b44 => {
+                    if (!b44) return null;
+                    return b44.entities[this.base44Config.entityName].create({
+                        filename: fileInfo.filename,
+                        url: fileInfo.url,
+                        path: fileInfo.path,
+                        size: fileInfo.size,
+                        mimetype: file.mimetype,
+                        originalname: file.originalname,
+                        uploadedAt: new Date().toISOString(),
+                        ...(this.base44Config.entityFields || {})
+                    });
+                });
+            })
+            .then(base44Record => {
+                cb(null, {
+                    ...fileInfo,
+                    ...(base44Record ? { base44RecordId: base44Record.id } : {})
                 });
             })
             .catch(cb);
-
     }
 
     _removeFile(req, file, cb) {

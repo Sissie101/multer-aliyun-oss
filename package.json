@@ -1,6 +1,6 @@
 {
   "name": "multer-aliyun-oss",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "Multer Storage for AliYun OSS",
   "main": "index.js",
   "scripts": {},
@@ -14,10 +14,14 @@
     "multer",
     "storage",
     "aliyun",
-    "oss"
+    "oss",
+    "base44"
   ],
   "dependencies": {
     "ali-oss": "^6.16.0"
+  },
+  "optionalDependencies": {
+    "@base44/sdk": "^1.0.0"
   },
   "devDependencies": {}
 }
