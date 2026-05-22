@@ -25,6 +25,11 @@ I'm a self-taught developer passionate about building real-world applications an
 A Multer storage engine for Alibaba Cloud OSS. I extended this package with a **Base44 integration** that automatically records file upload metadata in a Base44 entity — no extra backend code needed.
 `Node.js` `npm` `Cloud Storage` `REST APIs`
 
+### [flow-gen](https://github.com/Sissie101/flow-gen)
+<!-- Add a short description of what flow-gen does here -->
+A React-based application built with webpack and modern JavaScript.
+`React` `JavaScript` `Node.js` `Webpack`
+
 ---
 
 ## 🌱 Currently Learning
