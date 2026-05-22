@@ -1,6 +1,6 @@
 # Hi, I'm [Your Name] 👋
 
-I'm a self-taught developer passionate about building real-world applications and growing my skills through hands-on projects. I share my work here on GitHub as I learn and create.
+I'm an indie developer building my own apps and turning ideas into real products. No company behind me — just big ideas, clean code, and the drive to make things happen. Still growing, always shipping.
 
 ---
 
