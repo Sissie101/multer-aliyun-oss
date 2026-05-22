@@ -1,10 +1,24 @@
 # Multer Storage for AliYun OSS
 
-Dependencies [@ali-oss](https://github.com/ali-sdk/ali-oss)
+[![npm version](https://img.shields.io/npm/v/multer-aliyun-oss.svg)](https://www.npmjs.com/package/multer-aliyun-oss)
+[![license](https://img.shields.io/npm/l/multer-aliyun-oss.svg)](LICENSE)
+[![JavaScript](https://img.shields.io/badge/language-JavaScript-yellow.svg)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
+
+A [Multer](https://github.com/expressjs/multer) storage engine for [Alibaba Cloud OSS](https://www.alibabacloud.com/product/object-storage-service), with optional [Base44](https://base44.com) integration to automatically record upload metadata.
+
+Dependencies: [@ali-oss](https://github.com/ali-sdk/ali-oss)
+
+---
+
+## What's New
+
+**Base44 Integration** — Extended the original storage engine so every successful upload automatically creates a record in a Base44 entity. This makes it easy to build full-stack apps where file uploads are tracked in a database without writing any extra backend code.
+
+---
 
 ## Install
 
-```npm
+```sh
 npm install --save multer-aliyun-oss
 ```
 
@@ -22,27 +36,27 @@ const upload = multer({
             accessKeySecret: '<accessKeySecret>',
             bucket: '<bucket>',
         },
-        // to set path prefix for files, could be string or function
+        // optional path prefix — string or function
         destination: ''
     })
 });
 ```
 
-## File information
+## File Information
 
-Each file contains the following information:
+Each uploaded file exposes:
 
-Key | Description | Note
---- | --- | ---
-`fieldname` | Field name specified in the form |
-`originalname` | Name of the file on the user's computer |
-`encoding` | Encoding type of the file |
-`mimetype` | Mime type of the file |
-`size` | Size of the file in bytes |
-`destination` | The folder to which the file has been saved | `DiskStorage`
-`filename` | The name of the file within the `destination` | `DiskStorage`
-`path` | The full path to the uploaded file | `DiskStorage`
-`buffer` | A `Buffer` of the entire file | `MemoryStorage`
+| Field | Description | Storage |
+| --- | --- | --- |
+| `fieldname` | Field name from the form | |
+| `originalname` | Original filename from the client | |
+| `encoding` | Encoding type | |
+| `mimetype` | MIME type | |
+| `size` | File size in bytes | |
+| `destination` | Folder the file was saved to | `DiskStorage` |
+| `filename` | Filename within `destination` | `DiskStorage` |
+| `path` | Full path to the file | `DiskStorage` |
+| `buffer` | Buffer of the entire file | `MemoryStorage` |
 
 ## Option
 
@@ -50,12 +64,14 @@ Key | Description | Note
 
 `String` or `Function`
 
-```
+```js
 // same signature as multer native
-destination (req, file, callback) {
-    callback(null, 'images')
+destination(req, file, callback) {
+    callback(null, 'images');
 }
 ```
+
+---
 
 ## Base44 Integration
 
@@ -65,13 +81,13 @@ Connect this storage engine to your [Base44](https://base44.com) app to automati
 
 Install the optional Base44 SDK:
 
-```npm
+```sh
 npm install @base44/sdk
 ```
 
 ### Usage
 
-Pass a `base44` option with your app ID, credentials, and the entity name where file records should be saved:
+Pass a `base44` option with your app ID, credentials, and the entity name where records should be saved:
 
 ```js
 const multer = require('multer');
@@ -99,26 +115,29 @@ const upload = multer({
 });
 ```
 
-After each successful OSS upload, the storage engine creates a record in the specified Base44 entity with:
+After each successful OSS upload, the storage engine creates a record in the specified Base44 entity:
 
-Field | Value
---- | ---
-`filename` | OSS filename
-`url` | Public URL of the uploaded file
-`path` | OSS path prefix
-`size` | File size in bytes
-`mimetype` | MIME type
-`originalname` | Original filename from the client
-`uploadedAt` | ISO timestamp of the upload
+| Field | Value |
+| --- | --- |
+| `filename` | OSS filename |
+| `url` | Public URL of the uploaded file |
+| `path` | OSS path prefix |
+| `size` | File size in bytes |
+| `mimetype` | MIME type |
+| `originalname` | Original filename from the client |
+| `uploadedAt` | ISO timestamp of the upload |
 
-The file info object on `req.file` will also include a `base44RecordId` field with the newly created record's ID.
+The `req.file` object will also include a `base44RecordId` field with the newly created record's ID.
 
 ### Finding your Base44 App ID
 
-Open your app in the Base44 editor. The app ID is the segment in the URL:
+Open your app in the Base44 editor — the app ID is the segment in the URL:
+
 ```
 https://base44.com/apps/<app-id>/...
 ```
+
+---
 
 ## Contact
 
