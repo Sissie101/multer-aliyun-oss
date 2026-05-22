@@ -43,6 +43,8 @@ A React-based application built with webpack and modern JavaScript.
 ## 📫 Let's Connect
 
 - GitHub: [@Sissie101](https://github.com/Sissie101)
+- LinkedIn: [christygrace70](https://www.linkedin.com/in/christygrace70)
+- TikTok: [@christygrace70](https://www.tiktok.com/@christygrace70)
 - Email: gracechristy33@gmail.com
 
 ---
