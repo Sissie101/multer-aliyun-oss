@@ -1,6 +1,6 @@
 # Hi, I'm [Your Name] 👋
 
-I'm an indie developer building my own apps and turning ideas into real products. No company behind me — just big ideas, clean code, and the drive to make things happen. Still growing, always shipping.
+Just a country girl who taught herself to code and somehow ended up building real apps. I get big ideas, I figure out how to build them, and I share what I make here. Nothing fancy — just hard work and a little bit of grit.
 
 ---
 
